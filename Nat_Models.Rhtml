@@ -1,0 +1,98 @@
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+<p>This is an R HTML document. When you click the <b>Knit HTML</b> button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+
+<!--begin.rcode
+# Importing the dataset
+
+#df = read.csv('CleanDataNYC.csv', row.names = 1)
+#df <-as_data_frame(df)
+NATJobs<- read.csv('NATCleanDataNYC.csv', row.names = 1)
+NATJobs <- as_data_frame(NATJobs)
+NATJobs["Salary_Buckets"] <- as.factor(NATJobs$Salary_Buckets)
+NATRandomData = select(NATJobs,FullTime_PartTime,NYC_Residency_Requirements,Master.s_Degree,
+                       Bachelor.s_Degree, Microsoft,Programming_experience,Foreign_Language,
+                       Salary,Agencies_by_Topic,New_Job_Categories,Level,Salary_Buckets)
+
+# Splitting the dataset into the Training set and Test set
+# install.packages('caTools')
+library(caTools)
+set.seed(123)
+split = sample.split(NATRandomData$Salary_Buckets, SplitRatio = 0.8)
+training_set = subset(NATRandomData, split == TRUE)
+test_set = subset(NATRandomData, split == FALSE)
+
+# Feature Scaling
+# training_set = scale(training_set)
+# test_set = scale(test_set)
+
+# Fitting Random Forest Classification to the Training set
+Classifier.N = randomForest(x= training_set[-12],
+                          y = training_set$Salary_Buckets, importance = TRUE, ntree = 100)
+Classifier.N
+
+y_pred = predict(Classifier.N, newdata = test_set[-12])
+
+
+
+# Making the confusion Matrix
+c.matrix = table(test_set$Salary_Buckets,y_pred); 
+c.matrix
+
+varImpPlot(Classifier.N,main="Variable Importance Plots", pch=16, col='red')
+
+plot(Classifier.N)
+
+
+# Fitting Random Forest Classification to the Training set
+Classifier.N = randomForest(x= training_set[-12],
+                          y = training_set$Salary_Buckets, importance = TRUE, ntree = 20)
+Classifier.N
+
+y_pred = predict(Classifier.N, newdata = test_set[-12])
+
+
+
+# Making the confusion Matrix
+c.matrix = table(test_set$Salary_Buckets,y_pred); 
+c.matrix
+
+varImpPlot(Classifier.N,main="Variable Importance Plots", pch=16, col='red')
+plot(Classifier.N)
+
+
+# Fitting Random Forest Classification to the Training set
+Classifier.N = randomForest(x= training_set[-12],
+                          y = training_set$Salary_Buckets, importance = TRUE, ntree = 15)
+Classifier.N
+
+y_pred = predict(Classifier.N, newdata = test_set[-12])
+
+
+
+# Making the confusion Matrix
+c.matrix = table(test_set$Salary_Buckets,y_pred); 
+c.matrix
+
+varImpPlot(Classifier.N,main="Variable Importance Plots", pch=16, col='red')
+plot(Classifier.N)
+
+########################## RANDOMFOREST ENDS ################################
+
+
+end.rcode-->
+
+<p>You can also embed plots, for example:</p>
+
+<!--begin.rcode fig.width=7, fig.height=6
+plot(cars)
+end.rcode-->
+
+</body>
+</html>
